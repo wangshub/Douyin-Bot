@@ -1,6 +1,21 @@
 {
-    "under_game_score_y": 300, 
-    "press_coefficient": 1.392, 
-    "piece_base_height_1_2": 20, 
-    "piece_body_width": 70
+  "center_point":{
+    "x": 540,
+    "y": 965,
+    "rx": 10,
+    "ry": 300
+  },
+  "follow_bottom":{
+    "x": 990,
+    "y": 950,
+    "rx": 10,
+    "ry": 10
+  },
+  "star_bottom":{
+    "x": 1000,
+    "y": 1083,
+    "rx": 10,
+    "ry": 10
+  }
+
 }

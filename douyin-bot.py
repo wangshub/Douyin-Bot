@@ -33,7 +33,7 @@ adb.test_device()
 config = config.open_accordant_config()
 
 # 审美标准
-BEAUTY_THRESHOLD = 90
+BEAUTY_THRESHOLD = 80
 
 
 def yes_or_no():
@@ -143,6 +143,7 @@ def main():
 
             # 是个美人儿~关注点赞走一波
             if beauty > BEAUTY_THRESHOLD:
+                print('发现漂亮妹子！！！')
                 thumbs_up()
                 follow_user()
 
