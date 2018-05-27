@@ -40,7 +40,7 @@
 
 ## 脸部截取
 
-![](/Users/kaboom/Desktop/c3a916a7gy1frq7w5i7e5j20ya0f9wny.png)
+![](./screenshot/faces.png)
 
 ## LICENSE
 
