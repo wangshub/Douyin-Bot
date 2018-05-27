@@ -9,7 +9,7 @@ import numpy as np
 # img = mpimg.imread('../screenshot/comment_comment.jpeg')
 # img = mpimg.imread('../screenshot/add_comment.jpeg')
 
-img = mpimg.imread('../screenshot/WechatIMG26.jpeg')
+img = mpimg.imread('../autojump.png')
 
 imgplot = plt.imshow(img)
 plt.show()

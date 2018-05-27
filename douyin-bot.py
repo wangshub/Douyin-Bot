@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-import math
-import re
 import random
 import time
 from PIL import Image
@@ -22,15 +20,20 @@ except Exception as ex:
     exit(1)
 
 VERSION = "0.0.1"
+
+# 我申请的 Key，随便用，嘻嘻嘻
 AppID = '1106858595'
 AppKey = 'bNUNgOpY6AeeJjFu'
 
 DEBUG_SWITCH = True
+FACE_PATH = 'face/'
 
 adb = auto_adb()
 adb.test_device()
-
 config = config.open_accordant_config()
+
+# 审美标准
+BEAUTY_THRESHOLD = 90
 
 
 def yes_or_no():
@@ -59,6 +62,48 @@ def _random_bias(num):
     return random.randint(-num, num)
 
 
+def next_page():
+    """
+    翻到下一页
+    :return:
+    """
+    cmd = 'shell input swipe {x1} {y1} {x2} {y2} {duration}'.format(
+        x1=config['center_point']['x'],
+        y1=config['center_point']['y']+config['center_point']['ry'],
+        x2=config['center_point']['x'],
+        y2=config['center_point']['y'],
+        duration=200
+    )
+    adb.run(cmd)
+    time.sleep(1.5)
+
+
+def follow_user():
+    """
+    关注用户
+    :return:
+    """
+    cmd = 'shell input tap {x} {y}'.format(
+        x=config['follow_bottom']['x'] + _random_bias(10),
+        y=config['follow_bottom']['y'] + _random_bias(10)
+    )
+    adb.run(cmd)
+    time.sleep(0.5)
+
+
+def thumbs_up():
+    """
+    点赞
+    :return:
+    """
+    cmd = 'shell input tap {x} {y}'.format(
+        x=config['star_bottom']['x'] + _random_bias(10),
+        y=config['star_bottom']['y'] + _random_bias(10)
+    )
+    adb.run(cmd)
+    time.sleep(0.5)
+
+
 def main():
     """
     main
@@ -68,16 +113,42 @@ def main():
     print('激活窗口并按 CONTROL + C 组合键退出')
     debug.dump_device_info()
     screenshot.check_screenshot()
+
     while True:
+        next_page()
+
+        time.sleep(1)
         screenshot.pull_screenshot()
 
         resize_image('autojump.png', 'optimized.png', 1024*1024)
 
         with open('optimized.png', 'rb') as bin_data:
             image_data = bin_data.read()
+
         ai_obj = apiutil.AiPlat(AppID, AppKey)
         rsp = ai_obj.face_detectface(image_data, 0)
-        print(rsp)
+
+        if rsp['ret'] == 0:
+            beauty = 0
+            for face in rsp['data']['face_list']:
+                print(face)
+                face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
+                print(face_area)
+                img = Image.open("optimized.png")
+                cropped_img = img.crop(face_area).convert('RGB')
+                cropped_img.save(FACE_PATH + face['face_id'] + '.png')
+                # 性别判断
+                if face['beauty'] > beauty and face['gender'] < 50:
+                    beauty = face['beauty']
+
+            # 是个美人儿~关注点赞走一波
+            if beauty > BEAUTY_THRESHOLD:
+                thumbs_up()
+                follow_user()
+
+        else:
+            print(rsp)
+            continue
 
 
 if __name__ == '__main__':
