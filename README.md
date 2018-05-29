@@ -29,7 +29,7 @@
 
 ## 使用教程
 
-- 相关软件工具安装和使用步骤请参考 [wechat_jump_game](https://github.com/wangshub/wechat_jump_game) 和 [Android 和 iOS 操作步骤](https://github.com/wangshub/wechat_jump_game/wiki/Android-%E5%92%8C-iOS-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4)
+- 相关软件工具安装和使用步骤请参考 [wechat_jump_game](https://github.com/wangshub/wechat_jump_game) 和 [Android 操作步骤](https://github.com/wangshub/wechat_jump_game/wiki/Android-%E5%92%8C-iOS-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4)
 - 在 [ai.qq.com](https://ai.qq.com) 免费申请 `AppKey` 和 `AppID`
 1. 获取源码：`git clone https://github.com/wangshub/Douyin-Bot.git`
 2. 进入源码目录： `cd Douyin-Bot`
