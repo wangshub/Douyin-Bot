@@ -12,8 +12,8 @@ def resize_image(origin_img, optimize_img, threshold):
     :return:
     """
     file_size = os.path.getsize(origin_img)
-    if file_size > threshold:
-        with Image.open(origin_img) as im:
+    with Image.open(origin_img) as im:
+        if file_size > threshold:
             width, height = im.size
 
             if width >= height:
@@ -25,5 +25,7 @@ def resize_image(origin_img, optimize_img, threshold):
 
             resized_im = im.resize((new_width, new_height))
             resized_im.save(optimize_img)
+        else:
+            im.save(optimize_img)
 
 
