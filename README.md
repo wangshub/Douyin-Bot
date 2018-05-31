@@ -54,3 +54,7 @@
 MIT
 
 欢迎 Star 和 Fork ~
+
+如果你有什么问题请提 Issue，或者关注我的微信公众号留言，我都会一一解答
+
+![](screenshot/qrcode.jpg)
