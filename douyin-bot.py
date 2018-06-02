@@ -159,5 +159,5 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         adb.run('kill-server')
-        print('\n谢谢使用', end='')
+        print('谢谢使用')
         exit(0)
