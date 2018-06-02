@@ -36,6 +36,9 @@ config = config.open_accordant_config()
 # 审美标准
 BEAUTY_THRESHOLD = 80
 
+# 最小年龄
+GIRL_MIN_AGE = 18
+
 
 def yes_or_no():
     """
@@ -129,6 +132,9 @@ def main():
         ai_obj = apiutil.AiPlat(AppID, AppKey)
         rsp = ai_obj.face_detectface(image_data, 0)
 
+        major_total = 0
+        minor_total = 0
+
         if rsp['ret'] == 0:
             beauty = 0
             for face in rsp['data']['face_list']:
@@ -142,8 +148,13 @@ def main():
                 if face['beauty'] > beauty and face['gender'] < 50:
                     beauty = face['beauty']
 
+                if face['age'] > GIRL_MIN_AGE:
+                    major_total += 1
+                else:
+                    minor_total += 1
+
             # 是个美人儿~关注点赞走一波
-            if beauty > BEAUTY_THRESHOLD:
+            if beauty > BEAUTY_THRESHOLD and major_total > minor_total:
                 print('发现漂亮妹子！！！')
                 thumbs_up()
                 follow_user()
