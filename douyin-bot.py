@@ -35,6 +35,7 @@ config = config.open_accordant_config()
 
 # 审美标准
 BEAUTY_THRESHOLD = 80
+GENDER = "F"
 
 
 def yes_or_no():
@@ -139,12 +140,15 @@ def main():
                 cropped_img = img.crop(face_area).convert('RGB')
                 cropped_img.save(FACE_PATH + face['face_id'] + '.png')
                 # 性别判断
-                if face['beauty'] > beauty and face['gender'] < 50:
+                if face['beauty'] > beauty and (face['gender'] < 50 if GENDER=="F" else face['gender'] > 50):
                     beauty = face['beauty']
 
             # 是个美人儿~关注点赞走一波
             if beauty > BEAUTY_THRESHOLD:
-                print('发现漂亮妹子！！！')
+                print('发现{adj}{cs}！！！'.format(
+                    adj= "漂亮" if GENDER=="F" else "帅气",
+                    cs = "妹子" if GENDER=="F" else "汉子",
+                ))
                 thumbs_up()
                 follow_user()
 
