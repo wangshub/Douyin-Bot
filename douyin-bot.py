@@ -37,6 +37,9 @@ config = config.open_accordant_config()
 BEAUTY_THRESHOLD = 80
 GENDER = "F"
 
+# 最小年龄
+GIRL_MIN_AGE = 18
+
 
 def yes_or_no():
     """
@@ -166,6 +169,9 @@ def main():
         ai_obj = apiutil.AiPlat(AppID, AppKey)
         rsp = ai_obj.face_detectface(image_data, 0)
 
+        major_total = 0
+        minor_total = 0
+
         if rsp['ret'] == 0:
             beauty = 0
             for face in rsp['data']['face_list']:
@@ -179,8 +185,13 @@ def main():
                 if face['beauty'] > beauty and (face['gender'] < 50 if GENDER=="F" else face['gender'] > 50):
                     beauty = face['beauty']
 
+                if face['age'] > GIRL_MIN_AGE:
+                    major_total += 1
+                else:
+                    minor_total += 1
+
             # 是个美人儿~关注点赞走一波
-            if beauty > BEAUTY_THRESHOLD:
+            if beauty > BEAUTY_THRESHOLD and major_total > minor_total:
                 print('发现{adj}{cs}！！！'.format(
                     adj= "漂亮" if GENDER=="F" else "帅气",
                     cs = "妹子" if GENDER=="F" else "汉子",
@@ -199,5 +210,5 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         adb.run('kill-server')
-        print('\n谢谢使用', end='')
+        print('谢谢使用')
         exit(0)
