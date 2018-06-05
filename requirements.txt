@@ -3,4 +3,4 @@ xlrd==1.1.0
 pandas==0.22.0
 numpy==1.14.1
 Pillow==5.1.0
-scikit_learn==0.19.1
+scikit-learn==0.19.1
