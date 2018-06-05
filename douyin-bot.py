@@ -65,35 +65,52 @@ def _random_bias(num):
 
 def find_y_bias():
     global Y_BIAS
-    def pixel_match(im,target_x,target_y,target_r,target_g,target_b,diff,debug=False):
-        pixel=im.getpixel((target_x,target_y))
+
+    def pixel_match(im,
+                    target_x,
+                    target_y,
+                    target_r,
+                    target_g,
+                    target_b,
+                    diff,
+                    debug=False):
+        pixel = im.getpixel((target_x, target_y))
         if debug:
-            print([target_x,target_y],pixel,[target_r,target_g,target_b])
-        if abs(pixel[0]-target_r)+abs(pixel[1]-target_g)+abs(pixel[2]-target_b)<=diff:
+            print([target_x, target_y], pixel, [target_r, target_g, target_b])
+        if abs(pixel[0] - target_r) + abs(pixel[1] - target_g) + abs(
+                pixel[2] - target_b) <= diff:
             return True
         else:
             return False
 
-    def is_line(im,x1,x2,y1,y2,r=0,g=0,b=0,diff=0):
-        if x1>x2:
-            x1=x1+x2
-            x2=x1-x2
-            x1=x1-x2
-        if y1>y2:
-            y1=y1+y2
-            y2=y1-y2
-            y1=y1-y2
-        for x in range(x1,x2+1):
-            for y in range(y1,y2+1):
-                if not pixel_match(im,x,y,r,g,b,diff):
+    def is_line(im, x1, x2, y1, y2, r=0, g=0, b=0, diff=0):
+        if x1 > x2:
+            x1 = x1 + x2
+            x2 = x1 - x2
+            x1 = x1 - x2
+        if y1 > y2:
+            y1 = y1 + y2
+            y2 = y1 - y2
+            y1 = y1 - y2
+        for x in range(x1, x2 + 1):
+            for y in range(y1, y2 + 1):
+                if not pixel_match(im, x, y, r, g, b, diff):
                     return False
         return True
-    
+
     im = screenshot.pull_screenshot()
-    y = im.size[1]-1
-    while not is_line(im, config['home_sel']['x1'], config['home_sel']['x2'], y, y, r=255, g=255, b=255):
+    y = im.size[1] - 1
+    while not is_line(
+            im,
+            config['home_sel']['x1'],
+            config['home_sel']['x2'],
+            y,
+            y,
+            r=255,
+            g=255,
+            b=255):
         y -= 3
-    Y_BIAS = im.size[1]-y
+    Y_BIAS = im.size[1] - y
     print("Y_BIAS:", Y_BIAS)
 
 def next_page():
