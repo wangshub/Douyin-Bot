@@ -91,7 +91,7 @@ def find_y_bias():
     
     im = screenshot.pull_screenshot()
     y = im.size[1]-1
-    while not is_line(im, config['home_sel']['x1'], config['home_sel']['x2'], y, y+1, r=255, g=255, b=255):
+    while not is_line(im, config['home_sel']['x1'], config['home_sel']['x2'], y, y, r=255, g=255, b=255):
         y -= 3
     Y_BIAS = im.size[1]-y
     print("Y_BIAS:", Y_BIAS)
