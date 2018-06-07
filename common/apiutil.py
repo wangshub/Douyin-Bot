@@ -38,7 +38,7 @@ class AiPlat(object):
         req = urllib.request.Request(self.url, self.url_data)
         try:
             rsp = urllib.request.urlopen(req)
-            str_rsp = rsp.read()
+            str_rsp = rsp.read().decode('utf-8')
             dict_rsp = json.loads(str_rsp)
             return dict_rsp
         except Exception as e:
