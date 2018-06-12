@@ -104,3 +104,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# screenshot files
+autojump.png
+optimized.png

@@ -35,6 +35,7 @@ config = config.open_accordant_config()
 
 # 审美标准
 BEAUTY_THRESHOLD = 80
+GENDER = "F"
 
 # 最小年龄
 GIRL_MIN_AGE = 18
@@ -65,17 +66,67 @@ def _random_bias(num):
     print('num = ', num)
     return random.randint(-num, num)
 
+def find_y_bias():
+    global Y_BIAS
+
+    def pixel_match(im,
+                    target_x,
+                    target_y,
+                    target_r,
+                    target_g,
+                    target_b,
+                    diff,
+                    debug=False):
+        pixel = im.getpixel((target_x, target_y))
+        if debug:
+            print([target_x, target_y], pixel, [target_r, target_g, target_b])
+        if abs(pixel[0] - target_r) + abs(pixel[1] - target_g) + abs(
+                pixel[2] - target_b) <= diff:
+            return True
+        else:
+            return False
+
+    def is_line(im, x1, x2, y1, y2, r=0, g=0, b=0, diff=0):
+        if x1 > x2:
+            x1 = x1 + x2
+            x2 = x1 - x2
+            x1 = x1 - x2
+        if y1 > y2:
+            y1 = y1 + y2
+            y2 = y1 - y2
+            y1 = y1 - y2
+        for x in range(x1, x2 + 1):
+            for y in range(y1, y2 + 1):
+                if not pixel_match(im, x, y, r, g, b, diff):
+                    return False
+        return True
+
+    im = screenshot.pull_screenshot()
+    y = im.size[1] - 1
+    while not is_line(
+            im,
+            config['home_sel']['x1'],
+            config['home_sel']['x2'],
+            y,
+            y,
+            r=255,
+            g=255,
+            b=255):
+        y -= 3
+    Y_BIAS = im.size[1] - y
+    print("Y_BIAS:", Y_BIAS)
 
 def next_page():
     """
     翻到下一页
     :return:
     """
+    global Y_BIAS
     cmd = 'shell input swipe {x1} {y1} {x2} {y2} {duration}'.format(
         x1=config['center_point']['x'],
-        y1=config['center_point']['y']+config['center_point']['ry'],
+        y1=config['center_point']['y']+config['center_point']['ry'] - Y_BIAS,
         x2=config['center_point']['x'],
-        y2=config['center_point']['y'],
+        y2=config['center_point']['y'] - Y_BIAS,
         duration=200
     )
     adb.run(cmd)
@@ -87,9 +138,10 @@ def follow_user():
     关注用户
     :return:
     """
+    global Y_BIAS
     cmd = 'shell input tap {x} {y}'.format(
         x=config['follow_bottom']['x'] + _random_bias(10),
-        y=config['follow_bottom']['y'] + _random_bias(10)
+        y=config['follow_bottom']['y'] + _random_bias(10) - Y_BIAS
     )
     adb.run(cmd)
     time.sleep(0.5)
@@ -100,9 +152,10 @@ def thumbs_up():
     点赞
     :return:
     """
+    global Y_BIAS
     cmd = 'shell input tap {x} {y}'.format(
         x=config['star_bottom']['x'] + _random_bias(10),
-        y=config['star_bottom']['y'] + _random_bias(10)
+        y=config['star_bottom']['y'] + _random_bias(10) - Y_BIAS
     )
     adb.run(cmd)
     time.sleep(0.5)
@@ -117,6 +170,7 @@ def main():
     print('激活窗口并按 CONTROL + C 组合键退出')
     debug.dump_device_info()
     screenshot.check_screenshot()
+    find_y_bias()
 
     while True:
         next_page()
@@ -145,7 +199,7 @@ def main():
                 cropped_img = img.crop(face_area).convert('RGB')
                 cropped_img.save(FACE_PATH + face['face_id'] + '.png')
                 # 性别判断
-                if face['beauty'] > beauty and face['gender'] < 50:
+                if face['beauty'] > beauty and (face['gender'] < 50 if GENDER=="F" else face['gender'] > 50):
                     beauty = face['beauty']
 
                 if face['age'] > GIRL_MIN_AGE:
@@ -155,7 +209,10 @@ def main():
 
             # 是个美人儿~关注点赞走一波
             if beauty > BEAUTY_THRESHOLD and major_total > minor_total:
-                print('发现漂亮妹子！！！')
+                print('发现{adj}{cs}！！！'.format(
+                    adj= "漂亮" if GENDER=="F" else "帅气",
+                    cs = "妹子" if GENDER=="F" else "汉子",
+                ))
                 thumbs_up()
                 follow_user()
 
