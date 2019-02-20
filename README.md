@@ -59,4 +59,6 @@ MIT
 
 如果你有什么问题请提 Issue，或者关注我的微信公众号留言，我都会一一解答
 
-![](screenshot/qrcode.jpg)
+<p align="center">
+<img src="screenshot/qrcode.jpg" title="Logo" width="150">
+</>
