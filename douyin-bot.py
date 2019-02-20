@@ -3,7 +3,7 @@ import sys
 import random
 import time
 from PIL import Image
-
+import argparse
 
 if sys.version_info.major != 3:
     print('Please run under Python3')
@@ -50,7 +50,7 @@ def yes_or_no():
         if yes_or_no == 'y':
             break
         elif yes_or_no == 'n':
-            print('谢谢使用', end='')
+            print('谢谢使用')
             exit(0)
         else:
             print('请重新输入')
@@ -108,6 +108,41 @@ def thumbs_up():
     time.sleep(0.5)
 
 
+def tap(x, y):
+    cmd = 'shell input tap {x} {y}'.format(
+        x=x + _random_bias(10),
+        y=y + _random_bias(10)
+    )
+    adb.run(cmd)
+
+
+def auto_reply():
+
+    msg = "垆边人似月，皓腕凝霜雪_By_Python"
+
+    tap(config['comment_bottom']['x'], config['comment_bottom']['y'])
+    tap(config['comment_text']['x'], config['comment_text']['y'])
+
+    cmd = 'shell am broadcast -a ADB_INPUT_TEXT --es msg {text}'.format(text=msg)
+    adb.run(cmd)
+
+    tap(config['comment_send']['x'], config['comment_send']['y'])
+    cmd = 'shell input keyevent 4'
+    adb.run(cmd)
+
+
+
+
+
+
+def parser():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-r", "--reply", action='store_true',
+                    help="auto reply")
+    args = vars(ap.parse_args())
+    return args
+
+
 def main():
     """
     main
@@ -117,6 +152,8 @@ def main():
     print('激活窗口并按 CONTROL + C 组合键退出')
     debug.dump_device_info()
     screenshot.check_screenshot()
+
+    cmd_args = parser()
 
     while True:
         next_page()
@@ -138,9 +175,7 @@ def main():
         if rsp['ret'] == 0:
             beauty = 0
             for face in rsp['data']['face_list']:
-                print(face)
                 face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
-                print(face_area)
                 img = Image.open("optimized.png")
                 cropped_img = img.crop(face_area).convert('RGB')
                 cropped_img.save(FACE_PATH + face['face_id'] + '.png')
@@ -158,6 +193,9 @@ def main():
                 print('发现漂亮妹子！！！')
                 thumbs_up()
                 follow_user()
+
+                if cmd_args['reply']:
+                    auto_reply()
 
         else:
             print(rsp)
