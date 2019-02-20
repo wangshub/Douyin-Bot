@@ -6,12 +6,8 @@
 
 本着**高效、直接**地找到漂亮小姐姐的核心思想，我用 Python + ADB 做了一个 Python 抖音机器人 Douyin-Bot。
 
-<figure class="half">
-    <img src="./screenshot/demo.gif" title="Logo"  width="350">
-    <img src="./screenshot/auto_reply.gif" title="Logo"  width="350">
-</figure>
-
-
+<img src="./screenshot/demo.gif" title="Logo"  width="300"> <img src="./screenshot/auto_reply.gif" title="Logo"  width="300">
+    
 ##  特性
 
 - [x] **自动翻页**
