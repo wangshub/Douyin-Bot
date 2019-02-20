@@ -37,7 +37,7 @@ config = config.open_accordant_config()
 BEAUTY_THRESHOLD = 80
 
 # 最小年龄
-GIRL_MIN_AGE = 18
+GIRL_MIN_AGE = 14
 
 
 def yes_or_no():
@@ -62,7 +62,6 @@ def _random_bias(num):
     :param num:
     :return:
     """
-    print('num = ', num)
     return random.randint(-num, num)
 
 
@@ -118,21 +117,19 @@ def tap(x, y):
 
 def auto_reply():
 
-    msg = "垆边人似月，皓腕凝霜雪_By_Python"
+    msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀_Powered_By_Python"
 
     tap(config['comment_bottom']['x'], config['comment_bottom']['y'])
+    time.sleep(1)
     tap(config['comment_text']['x'], config['comment_text']['y'])
-
+    time.sleep(1)
     cmd = 'shell am broadcast -a ADB_INPUT_TEXT --es msg {text}'.format(text=msg)
     adb.run(cmd)
-
+    time.sleep(1)
     tap(config['comment_send']['x'], config['comment_send']['y'])
+    time.sleep(0.5)
     cmd = 'shell input keyevent 4'
     adb.run(cmd)
-
-
-
-
 
 
 def parser():
@@ -175,6 +172,14 @@ def main():
         if rsp['ret'] == 0:
             beauty = 0
             for face in rsp['data']['face_list']:
+
+                msg_log = '[INFO] gender: {gender} age: {age} expression: {expression} beauty: {beauty}'.format(
+                    gender=face['gender'],
+                    age=face['age'],
+                    expression=face['expression'],
+                    beauty=face['beauty'],
+                )
+                print(msg_log)
                 face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
                 img = Image.open("optimized.png")
                 cropped_img = img.crop(face_area).convert('RGB')
