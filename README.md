@@ -36,7 +36,7 @@
 2. 进入源码目录： `cd Douyin-Bot`
 3. 安装依赖： `pip install -r requirements.txt`
 4. 运行程序：`python douyin-bot.py`
-5. 自动回复(可选)：`python3 douyin-bot.py --reply`
+5. [自动评论](https://zhuanlan.zhihu.com/p/57242891)(可选)：`python3 douyin-bot.py --reply`
 
 ## 注意
 
