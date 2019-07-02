@@ -119,15 +119,21 @@ def auto_reply():
 
     msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀_Powered_By_Python"
 
+    # 点击右侧评论按钮
     tap(config['comment_bottom']['x'], config['comment_bottom']['y'])
     time.sleep(1)
+    #弹出评论列表后点击输入评论框
     tap(config['comment_text']['x'], config['comment_text']['y'])
     time.sleep(1)
+    #输入上面msg内容 ，注意要使用ADB keyboard  否则不能自动输入，参考： https://www.jianshu.com/p/2267adf15595
     cmd = 'shell am broadcast -a ADB_INPUT_TEXT --es msg {text}'.format(text=msg)
     adb.run(cmd)
     time.sleep(1)
+    # 点击发送按钮
     tap(config['comment_send']['x'], config['comment_send']['y'])
     time.sleep(0.5)
+
+    # 触发返回按钮, keyevent 4 对应安卓系统的返回键，参考KEY 对应按钮操作：  https://www.cnblogs.com/chengchengla1990/p/4515108.html
     cmd = 'shell input keyevent 4'
     adb.run(cmd)
 
