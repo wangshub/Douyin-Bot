@@ -23,8 +23,11 @@ VERSION = "0.0.1"
 
 # 我申请的 Key，随便用，嘻嘻嘻
 # 申请地址 http://ai.qq.com
-AppID = '1106858595'
-AppKey = 'bNUNgOpY6AeeJjFu'
+# AppID = '1106858595'
+# AppKey = 'bNUNgOpY6AeeJjFu'
+
+AppID = '2132918854'
+AppKey = 'SoUlkrTLVgtdXDWU'
 
 DEBUG_SWITCH = True
 FACE_PATH = 'face/'
