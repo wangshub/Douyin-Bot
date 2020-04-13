@@ -1,0 +1,100 @@
+{
+  "config_type": "BaseConfig",
+  "dependencies": {
+    "avrdude_binary": {
+      "cloud_storage_base_folder": "binary_dependencies/battor",
+      "cloud_storage_bucket": "chromium-telemetry",
+      "file_info": {
+        "mac_x86_64": {
+          "cloud_storage_hash": "6de6324c279ea75c79c68cab4c2ddcc68da1b286",
+          "download_path": "../bin/darwin/x86_64/avrdude",
+          "local_paths": [
+            "../bin/override/avrdude"
+          ]
+        },
+        "linux_x86_64": {
+          "cloud_storage_hash": "db29526605f6f95a75ab33f4060b8c330152de69",
+          "download_path": "../bin/linux/x86_64/avrdude",
+          "local_paths": [
+            "../bin/override/avrdude"
+          ]
+        },
+        "win_AMD64": {
+          "cloud_storage_hash": "517aa73b093e254007076cf5ac7afb94151df2ed",
+          "download_path": "../bin/win/x86_64/avrdude.exe",
+          "local_paths": [
+            "../bin/override/avrdude.exe"
+          ]
+        },
+        "win_x86": {
+          "cloud_storage_hash": "517aa73b093e254007076cf5ac7afb94151df2ed",
+          "download_path": "../bin/win/x86_64/avrdude.exe",
+          "local_paths": [
+            "../bin/override/avrdude.exe"
+          ]
+        }
+      }
+    },
+    "avrdude_config": {
+      "cloud_storage_base_folder": "binary_dependencies/battor",
+      "cloud_storage_bucket": "chromium-telemetry",
+      "file_info": {
+        "default": {
+          "cloud_storage_hash": "ccdfa12743429b8b92b61a20163d6311ab55a4fa",
+          "download_path": "../bin/battor/avrdude.conf",
+          "local_paths": [
+            "../bin/override/avrdude.conf"
+          ]
+        }
+      }
+    },
+    "battor_agent_binary": {
+      "cloud_storage_base_folder": "binary_dependencies/battor",
+      "cloud_storage_bucket": "chromium-telemetry",
+      "file_info": {
+        "mac_x86_64": {
+          "cloud_storage_hash": "154613804a1855a4871422bf99aa8e0dd0d7f62e",
+          "download_path": "../bin/darwin/x86_64/battor_agent",
+          "local_paths": [
+            "../bin/override/battor_agent"
+          ]
+        },
+        "linux_x86_64": {
+          "cloud_storage_hash": "f53e15b97301e9dab00e893800ec67a98e9f13ea",
+          "download_path": "../bin/linux/x86_64/battor_agent",
+          "local_paths": [
+            "../bin/override/battor_agent"
+          ]
+        },
+        "win_AMD64": {
+          "cloud_storage_hash": "4095a9159dd189ec591679e43b14d34ae30335eb",
+          "download_path": "../bin/win/x86_64/battor_agent.exe",
+          "local_paths": [
+            "../bin/override/battor_agent.exe"
+          ]
+        },
+        "win_x86": {
+          "cloud_storage_hash": "4095a9159dd189ec591679e43b14d34ae30335eb",
+          "download_path": "../bin/win/x86_64/battor_agent.exe",
+          "local_paths": [
+            "../bin/override/battor_agent.exe"
+          ]
+        }
+      }
+    },
+    "battor_firmware": {
+      "cloud_storage_base_folder": "binary_dependencies/battor",
+      "cloud_storage_bucket": "chromium-telemetry",
+      "file_info": {
+        "default": {
+          "cloud_storage_hash": "0649655f78698368a16a4e9ec37967b80528fdbf",
+          "download_path": "../bin/battor/battor_firmware.hex",
+          "local_paths": [
+            "../bin/override/battor_firmware.hex"
+          ],
+          "version_in_cs": "de05458"
+        }
+      }
+    }
+  }
+}

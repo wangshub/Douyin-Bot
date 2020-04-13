@@ -23,8 +23,10 @@ VERSION = "0.0.1"
 
 # 我申请的 Key，随便用，嘻嘻嘻
 # 申请地址 http://ai.qq.com
-AppID = '1106858595'
-AppKey = 'bNUNgOpY6AeeJjFu'
+AppID = '2131146472'
+AppKey = 'AHfzmUNMVLsgdr0R'
+#AppID = '1106858595'
+#AppKey = 'bNUNgOpY6AeeJjFu'
 
 DEBUG_SWITCH = True
 FACE_PATH = 'face/'
@@ -33,27 +35,11 @@ adb = auto_adb()
 adb.test_device()
 config = config.open_accordant_config()
 
-# 审美标准
+# 审美标准(颜值)
 BEAUTY_THRESHOLD = 80
 
 # 最小年龄
 GIRL_MIN_AGE = 14
-
-
-def yes_or_no():
-    """
-    检查是否已经为启动程序做好了准备
-    """
-    while True:
-        yes_or_no = str(input('请确保手机打开了 ADB 并连接了电脑，'
-                              '然后打开手机软件，确定开始？[y/n]:'))
-        if yes_or_no == 'y':
-            break
-        elif yes_or_no == 'n':
-            print('谢谢使用')
-            exit(0)
-        else:
-            print('请重新输入')
 
 
 def _random_bias(num):
@@ -212,10 +198,8 @@ def main():
             print(rsp)
             continue
 
-
 if __name__ == '__main__':
     try:
-        # yes_or_no()
         main()
     except KeyboardInterrupt:
         adb.run('kill-server')

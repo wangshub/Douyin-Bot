@@ -7,7 +7,7 @@ import platform
 class auto_adb():
     def __init__(self):
         try:
-            adb_path = 'adb'
+            adb_path = 'platform-tools\\adb'
             subprocess.Popen([adb_path], stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
             self.adb_path = adb_path
@@ -26,7 +26,7 @@ class auto_adb():
                         [adb_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 except OSError:
                     pass
-            print('请安装 ADB 及驱动并配置环境变量')
+            print('ADB启动失败')
             exit(1)
 
     def get_screen(self):

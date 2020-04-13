@@ -1,0 +1,182 @@
+#!/usr/bin/env python
+#
+# Copyright 2013 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+"""Updates the Chrome reference builds.
+
+Usage:
+  $ /path/to/update_reference_build.py
+  $ git commit -a
+  $ git cl upload
+"""
+
+import collections
+import logging
+import os
+import shutil
+import subprocess
+import sys
+import urllib2
+import zipfile
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'py_utils'))
+
+from py_utils import cloud_storage
+from dependency_manager import base_config
+
+
+def BuildNotFoundError(error_string):
+  raise ValueError(error_string)
+
+
+_CHROME_BINARIES_CONFIG = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), '..', '..', 'common',
+    'py_utils', 'py_utils', 'chrome_binaries.json')
+
+CHROME_GS_BUCKET = 'chrome-unsigned'
+
+
+# Remove a platform name from this list to disable updating it.
+# Add one to enable updating it. (Must also update _PLATFORM_MAP.)
+_PLATFORMS_TO_UPDATE = ['mac_x86_64', 'win_x86', 'win_AMD64', 'linux_x86_64',
+                        'android_k_armeabi-v7a', 'android_l_arm64-v8a',
+                        'android_l_armeabi-v7a']
+
+# Remove a channal name from this list to disable updating it.
+# Add one to enable updating it.
+_CHANNELS_TO_UPDATE = ['stable'] # 'canary', 'dev'
+
+
+# Omaha is Chrome's autoupdate server. It reports the current versions used
+# by each platform on each channel.
+_OMAHA_PLATFORMS = { 'stable':  ['mac', 'linux', 'win', 'android'],
+                    'dev':  ['linux'], 'canary': ['mac', 'win']}
+
+
+# All of the information we need to update each platform.
+#   omaha: name omaha uses for the plaftorms.
+#   zip_name: name of the zip file to be retrieved from cloud storage.
+#   gs_build: name of the Chrome build platform used in cloud storage.
+#   destination: Name of the folder to download the reference build to.
+UpdateInfo = collections.namedtuple('UpdateInfo',
+    'omaha, gs_folder, gs_build, zip_name')
+_PLATFORM_MAP = { 'mac_x86_64': UpdateInfo(omaha='mac',
+                                           gs_folder='desktop-*',
+                                           gs_build='mac64',
+                                           zip_name='chrome-mac.zip'),
+                  'win_x86': UpdateInfo(omaha='win',
+                                        gs_folder='desktop-*',
+                                        gs_build='win',
+                                        zip_name='chrome-win.zip'),
+                  'win_AMD64': UpdateInfo(omaha='win',
+                                          gs_folder='desktop-*',
+                                          gs_build='win64',
+                                          zip_name='chrome-win64.zip'),
+                  'linux_x86_64': UpdateInfo(omaha='linux',
+                                             gs_folder='desktop-*',
+                                             gs_build='linux64',
+                                             zip_name='chrome-linux64.zip'),
+                  'android_k_armeabi-v7a': UpdateInfo(omaha='android',
+                                                      gs_folder='android-*',
+                                                      gs_build='arm',
+                                                      zip_name='Chrome.apk'),
+                  'android_l_arm64-v8a': UpdateInfo(omaha='android',
+                                                    gs_folder='android-*',
+                                                    gs_build='arm_64',
+                                                    zip_name='ChromeModern.apk'),
+                  'android_l_armeabi-v7a': UpdateInfo(omaha='android',
+                                                      gs_folder='android-*',
+                                                      gs_build='arm',
+                                                      zip_name='Chrome.apk'),
+}
+
+
+def _ChannelVersionsMap(channel):
+  rows = _OmahaReportVersionInfo(channel)
+  omaha_versions_map = _OmahaVersionsMap(rows, channel)
+  channel_versions_map = {}
+  for platform in _PLATFORMS_TO_UPDATE:
+    omaha_platform = _PLATFORM_MAP[platform].omaha
+    if omaha_platform in omaha_versions_map:
+      channel_versions_map[platform] = omaha_versions_map[omaha_platform]
+  return channel_versions_map
+
+
+def _OmahaReportVersionInfo(channel):
+  url ='https://omahaproxy.appspot.com/all?channel=%s' % channel
+  lines = urllib2.urlopen(url).readlines()
+  return [l.split(',') for l in lines]
+
+
+def _OmahaVersionsMap(rows, channel):
+  platforms = _OMAHA_PLATFORMS.get(channel, [])
+  if (len(rows) < 1 or
+      not rows[0][0:3] == ['os', 'channel', 'current_version']):
+    raise ValueError(
+        'Omaha report is not in the expected form: %s.' % rows)
+  versions_map = {}
+  for row in rows[1:]:
+    if row[1] != channel:
+      raise ValueError(
+          'Omaha report contains a line with the channel %s' % row[1])
+    if row[0] in platforms:
+      versions_map[row[0]] = row[2]
+  logging.warn('versions map: %s' % versions_map)
+  if not all(platform in versions_map for platform in platforms):
+    raise ValueError(
+        'Omaha report did not contain all desired platforms for channel %s' % channel)
+  return versions_map
+
+
+def _QueuePlatformUpdate(platform, version, config, channel):
+  """ platform: the name of the platform for the browser to
+      be downloaded & updated from cloud storage. """
+  platform_info = _PLATFORM_MAP[platform]
+  filename = platform_info.zip_name
+  # remote_path example: desktop-*/30.0.1595.0/precise32/chrome-precise32.zip
+  remote_path = '%s/%s/%s/%s' % (
+      platform_info.gs_folder, version, platform_info.gs_build, filename)
+  if not cloud_storage.Exists(CHROME_GS_BUCKET, remote_path):
+    raise BuildNotFoundError(
+        'Failed to find %s build for version %s at path %s.' % (platform, version, remote_path))
+  reference_builds_folder = os.path.join(
+      os.path.dirname(os.path.abspath(__file__)), 'chrome_telemetry_build',
+      'reference_builds', channel)
+  if not os.path.exists(reference_builds_folder):
+    os.makedirs(reference_builds_folder)
+  local_dest_path = os.path.join(reference_builds_folder, filename)
+  cloud_storage.Get(CHROME_GS_BUCKET, remote_path, local_dest_path)
+  config.AddCloudStorageDependencyUpdateJob(
+      'chrome_%s' % channel, platform, local_dest_path, version=version,
+      execute_job=False)
+
+
+def UpdateBuilds():
+  config = base_config.BaseConfig(_CHROME_BINARIES_CONFIG, writable=True)
+  for channel in _CHANNELS_TO_UPDATE:
+    channel_versions_map = _ChannelVersionsMap(channel)
+    for platform in channel_versions_map:
+      print 'Downloading Chrome (%s channel) on %s' % (channel, platform)
+      current_version = config.GetVersion('chrome_%s' % channel, platform)
+      channel_version =  channel_versions_map.get(platform)
+      print 'current: %s, channel: %s' % (current_version, channel_version)
+      if current_version and current_version == channel_version:
+        continue
+      _QueuePlatformUpdate(platform, channel_version, config, channel)
+    # TODO: move execute update jobs here, and add committing/uploading the cl.
+
+  print 'Updating chrome builds with downloaded binaries'
+  config.ExecuteUpdateJobs(force=True)
+
+
+def main():
+  logging.getLogger().setLevel(logging.DEBUG)
+  #TODO(aiolos): alert sheriffs via email when an error is seen.
+  #This should be added when alerts are added when updating the build.
+  UpdateBuilds()
+  # TODO(aiolos): Add --commit flag. crbug.com/547229
+
+if __name__ == '__main__':
+  main()

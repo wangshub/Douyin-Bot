@@ -1,0 +1,16 @@
+Name: Python zipfile module
+Short Name: zipfile
+URL: https://github.com/python/cpython/blob/master/Lib/zipfile.py
+Version: 2.7.13
+License: Python
+License File: NOT_SHIPPED
+Security Critical: no
+
+Description:
+This is a copy of the zipfile module from Python 2.7.13. This snapshot was
+taken to workaround a bug in older Python versions such as 2.7.3. See
+<https://bugs.python.org/issue6972> and specifically the fix at
+<https://hg.python.org/cpython/rev/0c5fa35c9f12#l3.11>.
+
+Local Modifications:
+Renamed zipfile.py to zipfile_2_7_13.py to avoid conflicting with system copy.

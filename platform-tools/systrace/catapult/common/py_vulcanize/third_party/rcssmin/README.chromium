@@ -1,0 +1,16 @@
+Name: rCSSmin
+Short Name: rcssmin
+URL: http://opensource.perlig.de/rcssmin/
+Version: 1.0.5
+License: Apache 2.0
+License File: NOT_SHIPPED
+Security Critical: no
+
+Description:
+rCSSmin is a CSS minifier written in python.
+The minifier is based on the semantics of the YUI compressor, which itself is
+based on the rule list by Isaac Schlueter.
+
+Modifications made:
+ - Removed the bench.sh since the file doesn't have the licensing info and
+   caused license checker to fail.
