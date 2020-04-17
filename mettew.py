@@ -20,64 +20,83 @@ divs = BeautifulSoup(response.text, 'lxml').find_all('div', class_=div_class_nam
 for div in divs:
     for ul in div.find_all('ul'):
         temp_url = base_url + ul.li.a['href']
-        if(temp_url == 'http://www.mettew.com/companies/2507'):
-            print(ul.li.a.string + ' ' + temp_url)
-            all_url.append(temp_url)
+        # if(temp_url == 'http://www.mettew.com/companies/2325'):
+        print(ul.li.a.string + ' ' + temp_url)
+        all_url.append(temp_url)
 
+json_content = {}
 for c_url in all_url:
+
+    dict_company_name = {}
+    dict_main_comment = {}
+    dict_item_content = {}
+    list_item_content = []
+
+    company_div_class = 'nav_area_content'
+    response = requests.get(c_url)
+    beaut = BeautifulSoup(response.text, 'lxml')
+    divs = beaut.find_all('div', class_=company_div_class)
+    for div in divs:
+        company_name = div.strong.string
+        dict_company_name={'companyName': company_name}
+
     comments_div_class = 'comments_left pull-left'
     response = requests.get(c_url)
     beaut = BeautifulSoup(response.text, 'lxml')
     divs = beaut.find_all('div', class_=comments_div_class)
     for div in divs:
-        main_comments = div.h4.string
-        print(main_comments)
+        main_comment = div.h4.string
+        dict_main_comment = {'mainComment': main_comment}
 
     divs = beaut.find_all('div', class_='commentType')
     for div in divs:
-        up_or_down_class = div.div.i['class']
-        print(up_or_down_class)
-        if 'fa-thumbs-up' in up_or_down_class:
-            up_or_down = 'up'
-        if 'fa-thumbs-down' in up_or_down_class:
-            up_or_down = 'down'
+        item_up_or_down = {}
+        item_comment = {}
+        item_date = {}
+        item_re_comment = []
+        item_re_comment_dict = {}
+
+        item_divs = div.find_all('div')
+        for item_div in item_divs:
+            if item_div.attrs:
+                item_div_class = ' '.join(item_div['class'])
+
+                if 'comment_icon pull-left' == item_div_class:
+                    if 'fa-thumbs-up' in item_div.i['class']:
+                        up_or_down = 'up'
+                    if 'fa-thumbs-down' in item_div.i['class']:
+                        up_or_down = 'down'
+                    dict_up_or_down = {"itemUpOrDown": up_or_down}
+
+                if 'comment_txt pull-left' == item_div_class:
+                    item_comment = {'itemComment': item_div.p.string}
+                    item_date = {'itemDate': item_div.div.div.text}
+
+                if 'comment_child' == item_div_class:
+                    re_comment = {'reComment': item_div.p.string}
+                    re_comment_date = {'reCommentDate': item_div.div.div.text}
+                    re_comment.update(re_comment_date)
+
+                    item_re_comment.append(re_comment)
+                    # print(str(item_re_comment))
+
+        item_re_comment_dict = {"itemReComment": item_re_comment}
+
+        dict_up_or_down.update(item_comment)
+        dict_up_or_down.update(item_date)
+        dict_up_or_down.update(item_re_comment_dict)
+        list_item_content.append(dict_up_or_down)
+        # print(str(list_item_content))
+
+    dict_item_content = {'itemContent': list_item_content}
+    dict_company_name.update(dict_main_comment)
+    dict_company_name.update(dict_item_content)
+    print(str(dict_company_name))
 
 
 
 
 
-# names = []
-# server = []
-# phone = []
-# email = []
-# for c_url in all_url:
-#     company_name_div_class = 'col-xs-10 col-sm-10 col-md-10 col-lg-10'
-#     response = requests.get(c_url)
-#     beaut = BeautifulSoup(response.text, 'lxml')
-#     divs = beaut.find_all('div', class_=company_name_div_class)
-#
-#     if len(divs) > 0:
-#         print(divs[0].form.h3.string)
-#         names.append(divs[0].form.h3.string)
-#     divs = beaut.find_all('div', class_='col-xs-8 col-sm-8 col-md-8 col-lg-8 no-pad-l-r')
-#     for div in divs:
-#         if div.p.a:
-#             print(div.p.a.string)
-#             server.append(div.p.a.string)
-#         elif div.p.span:
-#             print(div.p.span.string)
-#             phone.append(div.p.span.string)
-#         else:
-#             try:
-#                 if '工作日' in div.p.string:
-#                     pass
-#                 else:
-#                     print(div.p.string)
-#                     email.append(div.p.string)
-#             except:
-#                 print(div.p.string)
-#                 email.append(div.p.string)
-#
 # workbook = xlsxwriter.Workbook('C:/Users/windows/Desktop/com.xlsx')
 # worksheet = workbook.add_worksheet()
 # for index, content in enumerate(names):
