@@ -81,7 +81,7 @@ def next_page():
         duration=200
     )
     adb.run(cmd)
-    time.sleep(1.5)
+    time.sleep(15)
 
 
 def follow_user():
