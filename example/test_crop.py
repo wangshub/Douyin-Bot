@@ -1,6 +1,6 @@
 from PIL import Image
 
-im = Image.open("../autojump.png")
+im = Image.open("../cropped.png")
 w, h = im.size
 
 area = (0, 0, 50, 50)
