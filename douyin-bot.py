@@ -3,8 +3,11 @@ import sys
 import random
 import time
 from PIL import Image
+import argparse
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
+
+
 
 if sys.version_info.major != 3:
     print('Please run under Python3')
@@ -38,7 +41,7 @@ config = config.open_accordant_config()
 BEAUTY_THRESHOLD = 80
 
 # 最小年龄
-GIRL_MIN_AGE = 18
+GIRL_MIN_AGE = 14
 
 
 def yes_or_no():
@@ -51,7 +54,7 @@ def yes_or_no():
         if yes_or_no == 'y':
             break
         elif yes_or_no == 'n':
-            print('谢谢使用', end='')
+            print('谢谢使用')
             exit(0)
         else:
             print('请重新输入')
@@ -63,7 +66,6 @@ def _random_bias(num):
     :param num:
     :return:
     """
-    print('num = ', num)
     return random.randint(-num, num)
 
 
@@ -109,6 +111,45 @@ def thumbs_up():
     time.sleep(0.5)
 
 
+def tap(x, y):
+    cmd = 'shell input tap {x} {y}'.format(
+        x=x + _random_bias(10),
+        y=y + _random_bias(10)
+    )
+    adb.run(cmd)
+
+
+def auto_reply():
+
+    msg = "垆边人似月，皓腕凝霜雪。就在刚刚，我的心动了一下，小姐姐你好可爱呀_Powered_By_Python"
+
+    # 点击右侧评论按钮
+    tap(config['comment_bottom']['x'], config['comment_bottom']['y'])
+    time.sleep(1)
+    #弹出评论列表后点击输入评论框
+    tap(config['comment_text']['x'], config['comment_text']['y'])
+    time.sleep(1)
+    #输入上面msg内容 ，注意要使用ADB keyboard  否则不能自动输入，参考： https://www.jianshu.com/p/2267adf15595
+    cmd = 'shell am broadcast -a ADB_INPUT_TEXT --es msg {text}'.format(text=msg)
+    adb.run(cmd)
+    time.sleep(1)
+    # 点击发送按钮
+    tap(config['comment_send']['x'], config['comment_send']['y'])
+    time.sleep(0.5)
+
+    # 触发返回按钮, keyevent 4 对应安卓系统的返回键，参考KEY 对应按钮操作：  https://www.cnblogs.com/chengchengla1990/p/4515108.html
+    cmd = 'shell input keyevent 4'
+    adb.run(cmd)
+
+
+def parser():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-r", "--reply", action='store_true',
+                    help="auto reply")
+    args = vars(ap.parse_args())
+    return args
+
+
 def main():
     """
     main
@@ -120,6 +161,8 @@ def main():
     print('激活窗口并按 CONTROL + C 组合键退出')
     debug.dump_device_info()
     screenshot.check_screenshot()
+
+    cmd_args = parser()
 
     while True:
         next_page()
@@ -146,9 +189,15 @@ def main():
         if rsp['ret'] == 0:
             beauty = 0
             for face in rsp['data']['face_list']:
-                print(face)
+
+                msg_log = '[INFO] gender: {gender} age: {age} expression: {expression} beauty: {beauty}'.format(
+                    gender=face['gender'],
+                    age=face['age'],
+                    expression=face['expression'],
+                    beauty=face['beauty'],
+                )
+                print(msg_log)
                 face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
-                print(face_area)
                 img = Image.open("optimized.png")
                 # imgOrg = Image.open("optimized.png")
                 # 性别判断
@@ -168,6 +217,9 @@ def main():
                 print('发现漂亮妹子！！！')
                 # thumbs_up()
                 # follow_user()
+
+                if cmd_args['reply']:
+                    auto_reply()
 
         else:
             print(rsp)

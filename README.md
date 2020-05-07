@@ -4,10 +4,10 @@
 
 最近沉迷于抖音无法自拔，常常花好几个小时在抖音**漂亮小姐姐**身上。
 
-为了**高效、直接**地找到漂亮小姐姐，我用 Python + ADB 做了一个 Python 抖音机器人 Douyin-Bot。
+本着**高效、直接**地找到漂亮小姐姐的核心思想，我用 Python + ADB 做了一个 Python 抖音机器人 Douyin-Bot。
 
-![](screenshot/demo.gif)
-
+<img src="./screenshot/demo.gif" title="Logo"  width="300"> <img src="./screenshot/auto_reply.gif" title="Logo"  width="300">
+    
 ##  特性
 
 - [x] **自动翻页**
@@ -16,9 +16,9 @@
 - [x] **自动点赞**
 - [x] **自动关注**
 - [x] 随机防 Ban
-- [ ] 自动回复
+- [x] **自动评论**
 
-##  原理
+## 原理
 
 - 打开《抖音短视频》APP，进入主界面
 - 获取手机截图，并对截图进行压缩 (Size < 1MB)；
@@ -28,6 +28,7 @@
 - 下一页，返回第一步；
 
 ## 使用教程
+
 - Python版本：3.0及以上
 - 相关软件工具安装和使用步骤请参考 [wechat_jump_game](https://github.com/wangshub/wechat_jump_game) 和 [Android 操作步骤](https://github.com/wangshub/wechat_jump_game/wiki/Android-%E5%92%8C-iOS-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4)
 - 在 [ai.qq.com](https://ai.qq.com) 免费申请 `AppKey` 和 `AppID`
@@ -35,6 +36,7 @@
 2. 进入源码目录： `cd Douyin-Bot`
 3. 安装依赖： `pip install -r requirements.txt`
 4. 运行程序：`python douyin-bot.py`
+5. [自动评论](https://zhuanlan.zhihu.com/p/57242891)(可选)：`python3 douyin-bot.py --reply`
 
 ## 注意
 
@@ -57,4 +59,6 @@ MIT
 
 如果你有什么问题请提 Issue，或者关注我的微信公众号留言，我都会一一解答
 
-![](screenshot/qrcode.jpg)
+<p align="center">
+<img src="screenshot/qrcode.jpg" title="Logo" width="150">
+</>
