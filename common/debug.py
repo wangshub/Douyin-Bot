@@ -39,7 +39,7 @@ def backup_screenshot(ts):
     为了方便失败的时候 debug
     """
     make_debug_dir(screenshot_backup_dir)
-    shutil.copy('{}{}autojump.png'.format(os.getcwd(), path_split),
+    shutil.copy('{}{}cropped.png'.format(os.getcwd(), path_split),
                 os.path.join(os.getcwd(), screenshot_backup_dir,
                              str(ts) + '.png'))
 

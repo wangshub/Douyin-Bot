@@ -47,17 +47,23 @@ def check_screenshot():
     检查获取截图的方式
     """
     global SCREENSHOT_WAY
-    if os.path.isfile('autojump.png'):
+    if os.path.isfile('cropped.png'):
         try:
-            os.remove('autojump.png')
+            os.remove('cropped.png')
         except Exception:
             pass
+    else:
+        print("没有发现旧图片")
     if SCREENSHOT_WAY < 0:
         print('暂不支持当前设备')
         sys.exit()
     try:
         im = pull_screenshot()
-        im.load()
+
+        cropped = im.crop((0, 0, 916, 1920))  # (left, upper, right, lower)
+        cropped.load()
+        cropped.save("./cropped.png")
+        cropped.close()
         im.close()
         print('采用方式 {} 获取截图'.format(SCREENSHOT_WAY))
     except Exception:

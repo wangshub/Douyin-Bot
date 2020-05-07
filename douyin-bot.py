@@ -3,7 +3,8 @@ import sys
 import random
 import time
 from PIL import Image
-
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 if sys.version_info.major != 3:
     print('Please run under Python3')
@@ -23,8 +24,8 @@ VERSION = "0.0.1"
 
 # 我申请的 Key，随便用，嘻嘻嘻
 # 申请地址 http://ai.qq.com
-AppID = '1106858595'
-AppKey = 'bNUNgOpY6AeeJjFu'
+AppID = 'xxx'
+AppKey = 'xxx'
 
 DEBUG_SWITCH = True
 FACE_PATH = 'face/'
@@ -113,6 +114,8 @@ def main():
     main
     :return:
     """
+    global img
+    global imgOrg
     print('程序版本号：{}'.format(VERSION))
     print('激活窗口并按 CONTROL + C 组合键退出')
     debug.dump_device_info()
@@ -122,9 +125,14 @@ def main():
         next_page()
 
         time.sleep(1)
-        screenshot.pull_screenshot()
+        im = screenshot.pull_screenshot()
+        cropped = im.crop((0, 0, 916, 1920))  # (left, upper, right, lower)
+        cropped.load()
+        cropped.save("./cropped.png")
+        cropped.close()
+        im.close()
 
-        resize_image('autojump.png', 'optimized.png', 1024*1024)
+        resize_image('cropped.png', 'optimized.png', 1024*1024)
 
         with open('optimized.png', 'rb') as bin_data:
             image_data = bin_data.read()
@@ -142,8 +150,7 @@ def main():
                 face_area = (face['x'], face['y'], face['x']+face['width'], face['y']+face['height'])
                 print(face_area)
                 img = Image.open("optimized.png")
-                cropped_img = img.crop(face_area).convert('RGB')
-                cropped_img.save(FACE_PATH + face['face_id'] + '.png')
+                # imgOrg = Image.open("optimized.png")
                 # 性别判断
                 if face['beauty'] > beauty and face['gender'] < 50:
                     beauty = face['beauty']
@@ -155,9 +162,12 @@ def main():
 
             # 是个美人儿~关注点赞走一波
             if beauty > BEAUTY_THRESHOLD and major_total > minor_total:
+                cropped_img = img.crop(face_area).convert('RGB')
+                cropped_img.save(FACE_PATH + face['face_id'] + '.png')
+                # imgOrg.save(FACE_PATH + face['face_id'] + 'a.png')
                 print('发现漂亮妹子！！！')
-                thumbs_up()
-                follow_user()
+                # thumbs_up()
+                # follow_user()
 
         else:
             print(rsp)
