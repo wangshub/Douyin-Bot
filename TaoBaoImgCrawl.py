@@ -43,9 +43,10 @@ def login():
 
 
 if __name__ == "__main__":
+    chromedriver="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
     options = Options()
     # options.add_argument('--proxy-server=127.0.0.1:8080')
-    browser = selenium.webdriver.Chrome(options=options)
+    browser = selenium.webdriver.Chrome(options=options,executable_path=chromedriver)
     WAIT = WebDriverWait(browser, 10)
     browser.maximize_window()
     browser.get('https://taobao.com')
