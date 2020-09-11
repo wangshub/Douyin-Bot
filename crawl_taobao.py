@@ -13,7 +13,7 @@ import json
 
 chromeOptions = webdriver.ChromeOptions()
 # 设置代理
-chromeOptions.add_argument("--proxy-server=223.243.5.161:4216")
+# chromeOptions.add_argument("--proxy-server=223.243.5.161:4216")
 
 chromedriver="C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe"
 browser=webdriver.Chrome(executable_path=chromedriver)

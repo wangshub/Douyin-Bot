@@ -92,21 +92,3 @@ for c_url in all_url:
     dict_company_name.update(dict_main_comment)
     dict_company_name.update(dict_item_content)
     print(str(dict_company_name))
-
-
-
-
-
-# workbook = xlsxwriter.Workbook('C:/Users/windows/Desktop/com.xlsx')
-# worksheet = workbook.add_worksheet()
-# for index, content in enumerate(names):
-#     row = 'A' + str(index + 1)
-#     row1 = 'B' + str(index + 1)
-#     row2 = 'C' + str(index + 1)
-#     row3 = 'D' + str(index + 1)
-#     worksheet.write(row, content)
-#     worksheet.write(row1, server[index])
-#     worksheet.write(row2, phone[index])
-#     worksheet.write(row3, email[index])
-#
-# workbook.close()
