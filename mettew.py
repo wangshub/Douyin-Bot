@@ -1,12 +1,15 @@
 from bs4 import BeautifulSoup
 import requests
 
-import xlsxwriter
-
 headers = {
-    'Content-Type': 'application/json; charset=UTF-8',
-    'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Language': 'zh-CN,zh;q=0.9',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36',
+}
+
+cookies = {
+    'Cookie': 'jsession=0f7317d78e03a35967b25123f5b7ff2d55caaefd7ce7d3cfff1af75d6a79e7b1'
 }
 
 base_url = 'http://www.mettew.com'
@@ -14,13 +17,14 @@ url = 'http://www.mettew.com/companies'
 div_class_name = 'col-md-8 search_div'
 all_url = []
 
-response = requests.get(url)
+s = requests.Session()
+response = s.get(url, headers=headers, allow_redirects=False, cookies=cookies)
+
 # 内容
 divs = BeautifulSoup(response.text, 'lxml').find_all('div', class_=div_class_name)
 for div in divs:
     for ul in div.find_all('ul'):
         temp_url = base_url + ul.li.a['href']
-        # if(temp_url == 'http://www.mettew.com/companies/2325'):
         print(ul.li.a.string + ' ' + temp_url)
         all_url.append(temp_url)
 
@@ -33,21 +37,21 @@ for c_url in all_url:
     list_item_content = []
 
     company_div_class = 'nav_area_content'
-    response = requests.get(c_url)
+    response = s.get(c_url, headers=headers, allow_redirects=False, cookies=cookies)
     beaut = BeautifulSoup(response.text, 'lxml')
     divs = beaut.find_all('div', class_=company_div_class)
+
     for div in divs:
         company_name = div.strong.string
         dict_company_name={'companyName': company_name}
 
     comments_div_class = 'comments_left pull-left'
-    response = requests.get(c_url)
     beaut = BeautifulSoup(response.text, 'lxml')
     divs = beaut.find_all('div', class_=comments_div_class)
+
     for div in divs:
         main_comment = div.h4.string
         dict_main_comment = {'mainComment': main_comment}
-
     divs = beaut.find_all('div', class_='commentType')
     for div in divs:
         item_up_or_down = {}
@@ -78,7 +82,6 @@ for c_url in all_url:
                     re_comment.update(re_comment_date)
 
                     item_re_comment.append(re_comment)
-                    # print(str(item_re_comment))
 
         item_re_comment_dict = {"itemReComment": item_re_comment}
 
@@ -86,7 +89,6 @@ for c_url in all_url:
         dict_up_or_down.update(item_date)
         dict_up_or_down.update(item_re_comment_dict)
         list_item_content.append(dict_up_or_down)
-        # print(str(list_item_content))
 
     dict_item_content = {'itemContent': list_item_content}
     dict_company_name.update(dict_main_comment)

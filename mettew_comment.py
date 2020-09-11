@@ -11,11 +11,8 @@ headers = {
 }
 
 cookies = {
-    'Cookie': 'jsession=0f7317d78e03a35967b25123f5b7ff2d55caaefd7ce7d3cfff1af75d6a79e7b1; Hm_lvt_8e5779def54689dfeb863aea23ad0397=1598852563; Hm_lpvt_8e5779def54689dfeb863aea23ad0397=1598861938; Hm_lvt_8e5779def54689dfeb863aea23ad0397=1598852563; Hm_lpvt_8e5779def54689dfeb863aea23ad0397=1599120019'
+    'Cookie': 'jsession=0f7317d78e03a35967b25123f5b7ff2d55caaefd7ce7d3cfff1af75d6a79e7b1'
 }
-
-# 'Content-Type': 'application/json; charset=UTF-8',
-# 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36'
 
 base_url = 'http://www.mettew.com'
 url = 'http://www.mettew.com/companies'
@@ -25,14 +22,11 @@ all_url = []
 s = requests.Session()
 
 response = s.get(url, headers=headers, allow_redirects=False, cookies=cookies)
-print(response.text)
 # 内容
 divs = BeautifulSoup(response.text, 'lxml').find_all('div', class_=div_class_name)
 for div in divs:
     for ul in div.find_all('ul'):
-        temp_url = base_url + ul.li.a['href'] + '/comment'
-        # if(temp_url == 'http://www.mettew.com/companies/2325'):
-        print(ul.li.a.string + ' ' + temp_url)
+        temp_url = base_url + ul.li.a['href']
         all_url.append(temp_url)
 
 comment_list = ['欢迎访问“求职吐槽”微信小程序！',
@@ -42,16 +36,58 @@ comment_list = ['欢迎访问“求职吐槽”微信小程序！',
                 '微信搜索小程序“求职吐槽”，不要让HR知道！'
             ]
 for c_url in all_url:
-    # 构造提交数据：parentId=&type=1&content=%
-    if '2981' not in c_url and '2980' not in c_url and '2979' not in c_url and '2978' \
-            not in c_url and '2977' not in c_url and '2976' not in c_url:
-        print(c_url)
+
+    flag = False
+
+    company_div_class = 'nav_area_content'
+    response = s.get(c_url, headers=headers, allow_redirects=False, cookies=cookies)
+    beaut = BeautifulSoup(response.text, 'lxml')
+    divs = beaut.find_all('div', class_=company_div_class)
+
+    for div in divs:
+        company_name = div.strong.string
+        dict_company_name={'companyName': company_name}
+
+    comments_div_class = 'comments_left pull-left'
+    beaut = BeautifulSoup(response.text, 'lxml')
+    divs = beaut.find_all('div', class_=comments_div_class)
+
+    for div in divs:
+        main_comment = div.h4.string
+        dict_main_comment = {'mainComment': main_comment}
+    divs = beaut.find_all('div', class_='commentType')
+    item_comment = []
+    for div in divs:
+
+        item_divs = div.find_all('div')
+        for item_div in item_divs:
+            if item_div.attrs:
+                item_div_class = ' '.join(item_div['class'])
+
+                if 'comment_txt pull-left' == item_div_class:
+                    item_comment.append(item_div.p.string)
+
+    for item in comment_list:
+        if(item in item_comment):
+            flag = True
+
+    if flag == False:
+
+        comment_url = c_url + '/comment'
+        print('*********************************************************************************************************')
+        print(item_comment)
+        print(comment_url)
+
         payload = {
             'parentId': '',
             'type': 1,
             'content': random.choice(comment_list)
         }
         # 提交数据：
-        respond = s.post(c_url, data=payload, headers=headers, cookies=cookies)
-        # print(respond.text)  # 输出响应
+        respond = s.post(comment_url, data=payload, headers=headers, cookies=cookies)
+        for item in comment_list:
+            if(item in respond.text):
+                print(item)
+                print('*********************************************************************************************************\n\n')
         time.sleep(180)
+
