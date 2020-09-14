@@ -87,7 +87,9 @@ for c_url in all_url:
         respond = s.post(comment_url, data=payload, headers=headers, cookies=cookies)
         for item in comment_list:
             if(item in respond.text):
-                print(item)
+
+                print('提交时间：' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                print('提交内容：' + item)
                 print('*********************************************************************************************************\n\n')
         time.sleep(180)
 
