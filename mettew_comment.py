@@ -73,23 +73,26 @@ for c_url in all_url:
 
     if flag == False:
 
-        comment_url = c_url + '/comment'
-        print('*********************************************************************************************************')
-        print(item_comment)
-        print(comment_url)
+        try:
+            comment_url = c_url + '/comment'
+            print('*********************************************************************************************************')
+            print(item_comment)
+            print(comment_url)
 
-        payload = {
-            'parentId': '',
-            'type': 1,
-            'content': random.choice(comment_list)
-        }
-        # 提交数据：
-        respond = s.post(comment_url, data=payload, headers=headers, cookies=cookies)
-        for item in comment_list:
-            if(item in respond.text):
+            payload = {
+                'parentId': '',
+                'type': 1,
+                'content': random.choice(comment_list)
+            }
+            # 提交数据：
+            respond = s.post(comment_url, data=payload, headers=headers, cookies=cookies)
+            for item in comment_list:
+                if(item in respond.text):
 
-                print('提交时间：' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-                print('提交内容：' + item)
-                print('*********************************************************************************************************\n\n')
-        time.sleep(180)
+                    print('提交时间：' + time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                    print('提交内容：' + item)
+                    print('*********************************************************************************************************\n\n')
+            time.sleep(180)
+        except Exception as e:
+            print(e)
 
