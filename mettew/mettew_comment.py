@@ -68,10 +68,11 @@ for c_url in all_url:
                     item_comment.append(item_div.p.string)
 
     for item in comment_list:
-        if(item in item_comment):
+        if item in item_comment:
             flag = True
+            break
 
-    if flag == False:
+    if not flag:
 
         try:
             comment_url = c_url + '/comment'

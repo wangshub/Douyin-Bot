@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.humi.app.tripart.manager.dao.ManagerEquipmentLogMapper">
+	<select id="searchEquipmentBehaviorLogPage" resultType="com.humi.app.tripart.manager.model.equipmentlog.EquipmentBehaviorLogResponseBean">
+		SELECT
+			content AS Content,
+			result AS Result,
+			scene AS Scene,
+			time AS Time,
+			userid AS Userid
+		FROM hm_iot_equipment_log
+		<where>
+			<if test="entity.productId!=null and entity.productId!=''">
+				AND product_id = #{entity.productId}
+			</if>
+			<if test="entity.minTime!=null and entity.minTime!='' and entity.maxTime!=null and entity.maxTime!=''">
+				<![CDATA[ AND DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S') >= DATE_FORMAT(#{entity.minTime}, '%Y-%m-%d %H:%i:%S')]]>
+				<![CDATA[ AND DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S') <= DATE_FORMAT(#{entity.maxTime}, '%Y-%m-%d %H:%i:%S')]]>
+			</if>
+		</where>
+		ORDER BY DATE_FORMAT(time, '%Y-%m-%d %H:%i:%S') DESC
+	</select>
+
+	<select id="searchEquipmentContextLogPage" resultType="com.humi.app.tripart.manager.model.equipmentlog.EquipmentContextLogResponseBean">
+		SELECT
+			product_id AS ProductID,
+			request_id AS RequestID,
+			src_name AS SrcName,
+			topic AS Topic,
+			device_name AS DeviceName,
+			payload AS Payload,
+			payload_fmt_type AS PayloadFmtType,
+			date_time AS DateTime,
+			uin AS Uin
+		FROM hm_iot_equipment_log
+		<where>
+			<if test="entity.productId!=null and entity.productId!=''">
+				AND product_id = #{entity.productId}
+			</if>
+			<if test="entity.minTime!=null and entity.minTime!='' and entity.maxTime!=null and entity.maxTime!=''">
+				<![CDATA[ AND DATE_FORMAT(date_time, '%Y-%m-%d %H:%i:%S') >= DATE_FORMAT(#{entity.minTime}, '%Y-%m-%d %H:%i:%S')]]>
+				<![CDATA[ AND DATE_FORMAT(date_time, '%Y-%m-%d %H:%i:%S') <= DATE_FORMAT(#{entity.maxTime}, '%Y-%m-%d %H:%i:%S')]]>
+			</if>
+		</where>
+		ORDER BY DATE_FORMAT(date_time, '%Y-%m-%d %H:%i:%S') DESC
+	</select>
+
+	<insert id="batchSave" parameterType="list">
+		insert into hm_iot_equipment_log
+		(id, type, product_id, device_name, request_id, src_name, topic, payload, payload_fmt_type, date_time, uin, create_by, update_by)
+		values
+		<foreach collection="entityList" item="item" separator=",">
+			(#{item.id,jdbcType=VARCHAR}, #{item.type,jdbcType=VARCHAR}, #{item.productId,jdbcType=VARCHAR},
+			#{item.deviceName,jdbcType=VARCHAR}, #{item.requestId,jdbcType=VARCHAR}, #{item.srcName,jdbcType=VARCHAR},
+			#{item.topic,jdbcType=VARCHAR}, #{item.payload,jdbcType=VARCHAR}, #{item.payloadFmtType,jdbcType=VARCHAR},
+			#{item.dateTime,jdbcType=VARCHAR}, #{item.uin,jdbcType=VARCHAR}, #{item.createBy,jdbcType=VARCHAR},
+			#{item.updateBy,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+</mapper>

@@ -29,7 +29,6 @@ font2.colour_index = 8
 style2.font = font2  # 设定样式
 style2.alignment = alignment
 
-
 patternFat = xlwt.Pattern()
 patternFat.pattern = xlwt.Pattern.SOLID_PATTERN
 patternFat.pattern_fore_colour = 1
@@ -63,6 +62,8 @@ def checkServer(sheet, NAME, URL, n):
         style3.pattern = patternPro
 
     c = pycurl.Curl()    #创建一个Curl对象
+    c.setopt(pycurl.SSL_VERIFYHOST, False)
+    c.setopt(pycurl.SSL_VERIFYPEER, False)
     c.setopt(pycurl.URL, URL)    #定义请求的URL常量
     c.setopt(pycurl.CONNECTTIMEOUT, 5)    #定义请求连接的等待时间
     c.setopt(pycurl.TIMEOUT, 5)    #定义请求超时时间
@@ -103,36 +104,38 @@ def checkServer(sheet, NAME, URL, n):
 
 serverList = [
                 # {'name':'FAT API服务', 'url':'http://gateway.fat.humiapp.com/actuator/health'},
-                {'name':'FAT humi-app-bigdata', 'url':'http://gateway.fat.humiapp.com/humi-app-bigdata/actuator/health'},
-                {'name':'FAT humi-app-developer', 'url':'http://gateway.fat.humiapp.com/humi-app-developer/actuator/health'},
-                {'name':'FAT humi-app-tripart', 'url':'http://gateway.fat.humiapp.com/humi-app-tripart/actuator/health'},
-                {'name':'FAT humi-iem-equipment', 'url':'http://gateway.fat.humiapp.com/humi-iem-equipment/actuator/health'},
-                {'name':'FAT 数据中台【humi-app-datacenter】', 'url':'http://gateway.fat.humiapp.com/humi-app-datacenter/actuator/health'},
-                {'name':'FAT 基础能力【humi-app-base】', 'url':'http://gateway.fat.humiapp.com/humi-app-base/actuator/health'},
-                {'name':'FAT 应用订单【humi-app-application】', 'url':'http://gateway.fat.humiapp.com/humi-app-application/actuator/health'},
-                {'name':'FAT 用户中心【humi-app-user】', 'url':'http://gateway.fat.humiapp.com/humi-app-user/actuator/health'},
-                {'name':'FAT 工业课堂【humi-app-community】', 'url':'http://gateway.fat.humiapp.com/humi-app-community/actuator/health'},
-                {'name':'FAT 认证中心【humi-app-security】', 'url':'http://gateway.fat.humiapp.com/humi-app-security/actuator/health'},
+                {'name':' FAT humi-app-bigdata', 'url':'http://gateway.fat.humiapp.com/humi-app-bigdata/actuator/health'},
+                {'name':' FAT humi-app-developer', 'url':'http://gateway.fat.humiapp.com/humi-app-developer/actuator/health'},
+                {'name':' FAT humi-app-tripart', 'url':'http://gateway.fat.humiapp.com/humi-app-tripart/actuator/health'},
+                {'name':' FAT humi-iem-equipment', 'url':'http://gateway.fat.humiapp.com/humi-iem-equipment/actuator/health'},
+                {'name':' FAT 数据中台【humi-app-datacenter】', 'url':'http://gateway.fat.humiapp.com/humi-app-datacenter/actuator/health'},
+                {'name':' FAT 基础能力【humi-app-base】', 'url':'http://gateway.fat.humiapp.com/humi-app-base/actuator/health'},
+                {'name':' FAT 应用订单【humi-app-application】', 'url':'http://gateway.fat.humiapp.com/humi-app-application/actuator/health'},
+                {'name':' FAT 用户中心【humi-app-user】', 'url':'http://gateway.fat.humiapp.com/humi-app-user/actuator/health'},
+                {'name':' FAT 工业课堂【humi-app-community】', 'url':'http://gateway.fat.humiapp.com/humi-app-community/actuator/health'},
+                {'name':' FAT 认证中心【humi-app-security】', 'url':'http://gateway.fat.humiapp.com/humi-app-security/actuator/health'},
 
                 # {'name':'UAT API服务', 'url':'http://gateway.uat.humiapp.com/actuator/health'},
-                {'name':'UAT humi-app-developer', 'url':'http://gateway.uat.humiapp.com/humi-app-developer/actuator/health'},
-                {'name':'UAT humi-app-tripart', 'url':'http://gateway.uat.humiapp.com/humi-app-tripart/actuator/health'},
-                {'name':'UAT 数据中台【humi-app-datacenter】', 'url':'http://gateway.uat.humiapp.com/humi-app-datacenter/actuator/health'},
-                {'name':'UAT 基础能力【humi-app-base】', 'url':'http://gateway.uat.humiapp.com/humi-app-base/actuator/health'},
-                {'name':'UAT 应用订单【humi-app-application】', 'url':'http://gateway.uat.humiapp.com/humi-app-application/actuator/health'},
-                {'name':'UAT 用户中心【humi-app-user】', 'url':'http://gateway.uat.humiapp.com/humi-app-user/actuator/health'},
-                {'name':'UAT 工业课堂【humi-app-community】', 'url':'http://gateway.uat.humiapp.com/humi-app-community/actuator/health'},
-                {'name':'UAT 认证中心【humi-app-security】', 'url':'http://gateway.uat.humiapp.com/humi-app-security/actuator/health'},
+                {'name':' UAT humi-app-bigdata', 'url':'http://gateway.uat.humiapp.com/humi-app-bigdata/actuator/health'},
+                {'name':' UAT humi-app-developer', 'url':'http://gateway.uat.humiapp.com/humi-app-developer/actuator/health'},
+                {'name':' UAT humi-app-tripart', 'url':'http://gateway.uat.humiapp.com/humi-app-tripart/actuator/health'},
+                {'name':' UAT 数据中台【humi-app-datacenter】', 'url':'http://gateway.uat.humiapp.com/humi-app-datacenter/actuator/health'},
+                {'name':' UAT 基础能力【humi-app-base】', 'url':'http://gateway.uat.humiapp.com/humi-app-base/actuator/health'},
+                {'name':' UAT 应用订单【humi-app-application】', 'url':'http://gateway.uat.humiapp.com/humi-app-application/actuator/health'},
+                {'name':' UAT 用户中心【humi-app-user】', 'url':'http://gateway.uat.humiapp.com/humi-app-user/actuator/health'},
+                {'name':' UAT 工业课堂【humi-app-community】', 'url':'http://gateway.uat.humiapp.com/humi-app-community/actuator/health'},
+                {'name':' UAT 认证中心【humi-app-security】', 'url':'http://gateway.uat.humiapp.com/humi-app-security/actuator/health'},
 
                 # {'name':'PRO API服务', 'url':'http://apis.360humi.com/actuator/health'},
-                {'name':'PRO humi-app-developer', 'url':'http://apis.360humi.com/humi-app-developer/actuator/health'},
-                {'name':'PRO humi-app-tripart', 'url':'http://apis.360humi.com/humi-app-tripart/actuator/health'},
-                {'name':'PRO 数据中台【humi-app-datacenter】', 'url':'http://apis.360humi.com/humi-app-datacenter/actuator/health'},
-                {'name':'PRO 基础能力【humi-app-base】', 'url':'http://apis.360humi.com/humi-app-base/actuator/health'},
-                {'name':'PRO 应用订单【humi-app-application】', 'url':'http://apis.360humi.com/humi-app-application/actuator/health'},
-                {'name':'PRO 用户中心【humi-app-user】', 'url':'http://apis.360humi.com/humi-app-user/actuator/health'},
-                {'name':'PRO 工业课堂【humi-app-community】', 'url':'http://apis.360humi.com/humi-app-community/actuator/health'},
-                {'name':'PRO 认证中心【humi-app-security】', 'url':'http://apis.360humi.com/humi-app-security/actuator/health'}
+                {'name':' PRO humi-app-bigdata', 'url':'https://apis.360humi.com/humi-app-bigdata/actuator/health'},
+                {'name':' PRO humi-app-developer', 'url':'https://apis.360humi.com/humi-app-developer/actuator/health'},
+                {'name':' PRO humi-app-tripart', 'url':'https://apis.360humi.com/humi-app-tripart/actuator/health'},
+                {'name':' PRO 数据中台【humi-app-datacenter】', 'url':'https://apis.360humi.com/humi-app-datacenter/actuator/health'},
+                {'name':' PRO 基础能力【humi-app-base】', 'url':'https://apis.360humi.com/humi-app-base/actuator/health'},
+                {'name':' PRO 应用订单【humi-app-application】', 'url':'https://apis.360humi.com/humi-app-application/actuator/health'},
+                {'name':' PRO 用户中心【humi-app-user】', 'url':'https://apis.360humi.com/humi-app-user/actuator/health'},
+                {'name':' PRO 工业课堂【humi-app-community】', 'url':'https://apis.360humi.com/humi-app-community/actuator/health'},
+                {'name':' PRO 认证中心【humi-app-security】', 'url':'https://apis.360humi.com/humi-app-security/actuator/health'}
             ]
 
 book = xlwt.Workbook(encoding='utf-8')      #创建工作簿
