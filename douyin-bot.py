@@ -37,24 +37,15 @@ config = config.open_accordant_config()
 BEAUTY_THRESHOLD = 80
 
 # 最小年龄
-GIRL_MIN_AGE = 14
+GIRL_MIN_AGE = 18
 
 
-def yes_or_no():
-    """
-    检查是否已经为启动程序做好了准备
-    """
-    while True:
-        yes_or_no = str(input('请确保手机打开了 ADB 并连接了电脑，'
-                              '然后打开手机软件，确定开始？[y/n]:'))
-        if yes_or_no == 'y':
-            break
-        elif yes_or_no == 'n':
-            print('谢谢使用')
-            exit(0)
-        else:
-            print('请重新输入')
-
+def openDouyinByAdb():
+    # 检测抖音是否开启
+    status = adb.run("shell ps | grep com.ss.android.ugc.aweme")
+    if not status:
+        # 开启抖音
+        adb.run("shell am start com.ss.android.ugc.aweme/com.ss.android.ugc.aweme.splash.SplashActivity")
 
 def _random_bias(num):
     """
@@ -215,7 +206,8 @@ def main():
 
 if __name__ == '__main__':
     try:
-        # yes_or_no()
+        openDouyinByAdb()
+        time.sleep(1)
         main()
     except KeyboardInterrupt:
         adb.run('kill-server')
